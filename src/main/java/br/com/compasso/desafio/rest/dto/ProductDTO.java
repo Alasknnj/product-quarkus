@@ -3,6 +3,8 @@ package br.com.compasso.desafio.rest.dto;
 import br.com.compasso.desafio.domain.entity.Product;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductDTO {
 
@@ -32,6 +34,10 @@ public class ProductDTO {
         product.setPrice(this.price);
 
         return product;
+    }
+
+    public static List<ProductDTO> toDTOList(List<Product> productList) {
+        return productList.stream().map(ProductDTO::new).collect(Collectors.toList());
     }
 
     public String getId() {

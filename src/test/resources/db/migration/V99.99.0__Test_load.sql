@@ -1,0 +1,3 @@
+INSERT INTO product (id, name, description, price) VALUES ('e7442b1a-077b-4e44-b671-cb6c79238d71', 'Carga teste', 'Produto de carga teste', 99.9);
+INSERT INTO product (id, name, description, price) VALUES ('08290ab4-aa35-4dee-9a80-e777189db255', 'Produto alterável', 'Produto que deve ser atualizado', 12.34);
+INSERT INTO product (id, name, description, price) VALUES ('98529d5a-605c-466e-9dfe-cece67cddc87', 'Produto obsoleto', 'Produto que deve ser apagado', 10.50);

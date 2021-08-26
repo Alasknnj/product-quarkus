@@ -14,47 +14,41 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("products")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class ProductResource {
 
     @Inject
     ProductService service;
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     // TODO: 8/25/21
     public Response create(@NotNull(message = "DTO is mandatory") final ProductDTO dto) {
-
-        Product product = dto.toEntity();
-        ProductDTO dto2 = new ProductDTO(service.create(product));
-        return Response.status(HttpStatus.SC_CREATED).entity(dto2).build();
+        return Response.status(HttpStatus.SC_CREATED)
+                .entity(new ProductDTO(service.create(dto.toEntity()))).build();
     }
 
     @PUT
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     // TODO: 8/25/
     public ProductDTO update(
         @PathParam("id") @Size(min = 36, max = 36, message = "ID must have 36 characters") final String id,
         @NotNull(message = "DTO is mandatory") final ProductDTO dto) {
 
-        return null;
+        return new ProductDTO(service.update(id, dto.toEntity()));
     }
 
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     // TODO: 8/25/21
     public ProductDTO getById(@PathParam("id") @Size(min = 36, max = 36, message = "ID must have 36 characters") final String id) {
-        return null;
+        return new ProductDTO(Product.getProductByIdOrThrow(id));
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     // TODO: 8/25/21
     public List<ProductDTO> getAll() {
-        return null;
+        return ProductDTO.toDTOList(Product.getAllProducts());
     }
 
     @GET
@@ -68,6 +62,7 @@ public class ProductResource {
     @Path("{id}")
     // TODO: 8/25/21
     public Response delete(@PathParam("id") @Size(min = 36, max = 36, message = "ID must have 36 characters") final String id) {
-        return null;
+        service.delete(id);
+        return Response.ok().build();
     }
 }

@@ -14,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -32,7 +30,14 @@ class ProductResourceTest {
     private static final String ENDPOINT_DELETE = "%s";
 
     private static final String MOCK_JSON_PATH = "src/test/resources/mock-json/";
+    private static final String PRODUCT_TEST_LOAD = MOCK_JSON_PATH + "test-load.json";
     private static final String VALID_PRODUCT = MOCK_JSON_PATH + "valid-product.json";
+    private static final String VALID_PRODUCT_UPDATE = MOCK_JSON_PATH + "valid-product-update.json";
+
+    private static final String PRODUCT_TEST_LOAD_ID = "e7442b1a-077b-4e44-b671-cb6c79238d71";
+    private static final String PRODUCT_OBSOLETE_ID = "98529d5a-605c-466e-9dfe-cece67cddc87";
+    private static final String PRODUCT_UPDATABLE_ID = "08290ab4-aa35-4dee-9a80-e777189db255";
+    private static final String PRODUCT_NONEXISTING_ID = "77bab5b5-f9d4-4bb3-89ec-893a1f596bd3";
 
     @Inject
     JsonBuilder builder;
@@ -50,9 +55,10 @@ class ProductResourceTest {
             .body("description", is(dto.getDescription()))
             .body("price", is(dto.getPrice().floatValue()));
     }
+
     // error on missing name
     @Test
-    void shouldThrowErrorOnCreateProductBlankName() throws IOException {
+    void shouldFailOnCreateProductBlankName() throws IOException {
         ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT, ProductDTO.class);
         dto.setName(null);
         given().contentType(ContentType.JSON)
@@ -62,9 +68,10 @@ class ProductResourceTest {
             .body("status_code", is(HttpStatus.SC_BAD_REQUEST))
             .body("message", containsString("name is mandatory"));
     }
+
     // error on missing description
     @Test
-    void shouldThrowErrorOnCreateProductBlankDescription() throws IOException {
+    void shouldFailOnCreateProductBlankDescription() throws IOException {
         ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT, ProductDTO.class);
         dto.setDescription(null);
         given().contentType(ContentType.JSON)
@@ -74,9 +81,10 @@ class ProductResourceTest {
             .body("status_code", is(HttpStatus.SC_BAD_REQUEST))
             .body("message", containsString("description is mandatory"));
     }
+
     // error on missing price
     @Test
-    void shouldThrowErrorOnCreateProductBlankPrice() throws IOException {
+    void shouldFailOnCreateProductBlankPrice() throws IOException {
         ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT, ProductDTO.class);
         dto.setPrice(null);
         given().contentType(ContentType.JSON)
@@ -86,9 +94,10 @@ class ProductResourceTest {
             .body("status_code", is(HttpStatus.SC_BAD_REQUEST))
             .body("message", containsString("price is mandatory"));
     }
+
     // error on negative price
     @Test
-    void shouldThrowErrorOnCreateProductPriceNegative() throws IOException {
+    void shouldFailOnCreateProductPriceNegative() throws IOException {
         ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT, ProductDTO.class);
         dto.setPrice(BigDecimal.valueOf(-10));
         given().contentType(ContentType.JSON)
@@ -98,11 +107,12 @@ class ProductResourceTest {
             .body("status_code", is(HttpStatus.SC_BAD_REQUEST))
             .body("message", containsString("price must be positive"));
     }
+
     // error on zero price
     @Test
-    void shouldThrowErrorOnCreateProductPriceZero() throws IOException {
+    void shouldFailOnCreateProductPriceZero() throws IOException {
         ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT, ProductDTO.class);
-        dto.setPrice(BigDecimal.valueOf(0));
+        dto.setPrice(BigDecimal.ZERO);
         given().contentType(ContentType.JSON)
             .body(builder.toJson(dto))
             .post(ENDPOINT_CREATE)
@@ -112,23 +122,140 @@ class ProductResourceTest {
     }
 
     // update successfully
+    @Test
+    void shouldUpdateProduct() throws IOException {
+        ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT_UPDATE, ProductDTO.class);
+        given().contentType(ContentType.JSON)
+                .body(builder.toJson(dto))
+                .put(String.format(ENDPOINT_UPDATE, PRODUCT_UPDATABLE_ID))
+                .then().statusCode(HttpStatus.SC_OK)
+                .body("id", is(PRODUCT_UPDATABLE_ID))
+                .body("name", is(dto.getName()))
+                .body("description", is(dto.getDescription()))
+                .body("price", is(dto.getPrice().floatValue()));
+    }
+
     // error on id not found
+    @Test
+    void shouldFailOnProductUpdateNonexisting() throws IOException {
+        ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT_UPDATE, ProductDTO.class);
+        given().contentType(ContentType.JSON)
+                .body(builder.toJson(dto))
+                .put(String.format(ENDPOINT_UPDATE, PRODUCT_NONEXISTING_ID))
+                .then().statusCode(HttpStatus.SC_NOT_FOUND)
+                .body("status_code", is(HttpStatus.SC_NOT_FOUND))
+                .body("message", containsString("he product with id " + PRODUCT_NONEXISTING_ID + " was not found"));
+    }
+
     // error on missing name
+    @Test
+    void shouldFailOnProductUpdateBlankName() throws IOException {
+        ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT, ProductDTO.class);
+        dto.setName(null);
+        given().contentType(ContentType.JSON)
+                .body(builder.toJson(dto))
+                .put(String.format(ENDPOINT_UPDATE, PRODUCT_TEST_LOAD_ID))
+                .then().statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body("status_code", is(HttpStatus.SC_BAD_REQUEST))
+                .body("message", containsString("name is mandatory"));
+    }
+
     // error on missing description
+    @Test
+    void shouldFailOnProductUpdateBlankDescription() throws IOException {
+        ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT, ProductDTO.class);
+        dto.setDescription(null);
+        given().contentType(ContentType.JSON)
+                .body(builder.toJson(dto))
+                .put(String.format(ENDPOINT_UPDATE, PRODUCT_TEST_LOAD_ID))
+                .then().statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body("status_code", is(HttpStatus.SC_BAD_REQUEST))
+                .body("message", containsString("description is mandatory"));
+    }
+
     // error on missing price
+    @Test
+    void shouldFailOnProductUpdateBlankprice() throws IOException {
+        ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT, ProductDTO.class);
+        dto.setPrice(null);
+        given().contentType(ContentType.JSON)
+                .body(builder.toJson(dto))
+                .put(String.format(ENDPOINT_UPDATE, PRODUCT_TEST_LOAD_ID))
+                .then().statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body("status_code", is(HttpStatus.SC_BAD_REQUEST))
+                .body("message", containsString("price is mandatory"));
+    }
     // error on negative price
+    @Test
+    void shouldFailOnProductUpdateNegativePrice() throws IOException {
+        ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT, ProductDTO.class);
+        dto.setPrice(BigDecimal.valueOf(-10));
+        given().contentType(ContentType.JSON)
+                .body(builder.toJson(dto))
+                .put(String.format(ENDPOINT_UPDATE, PRODUCT_TEST_LOAD_ID))
+                .then().statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body("status_code", is(HttpStatus.SC_BAD_REQUEST))
+                .body("message", containsString("price must be positive"));
+    }
+
     // error on zero price
+    @Test
+    void shouldFailOnProductUpdateZeroPrice() throws IOException {
+        ProductDTO dto = builder.fromJsonFile(VALID_PRODUCT, ProductDTO.class);
+        dto.setPrice(BigDecimal.ZERO);
+        given().contentType(ContentType.JSON)
+                .body(builder.toJson(dto))
+                .put(String.format(ENDPOINT_UPDATE, PRODUCT_TEST_LOAD_ID))
+                .then().statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body("status_code", is(HttpStatus.SC_BAD_REQUEST))
+                .body("message", containsString("price must be positive"));
+    }
 
     // get by id successfully
+    @Test
+    void shouldGetProductById() throws IOException {
+        ProductDTO dto = builder.fromJsonFile(PRODUCT_TEST_LOAD, ProductDTO.class);
+
+        given().get(String.format(ENDPOINT_GET_ID, PRODUCT_TEST_LOAD_ID))
+                .then().statusCode(HttpStatus.SC_OK)
+                .body("id", is(PRODUCT_TEST_LOAD_ID))
+                .body("name", is(dto.getName()))
+                .body("description", is(dto.getDescription()))
+                .body("price", is(dto.getPrice().floatValue()));
+    }
+
     // error on id not found
+    @Test
+    void shouldFailOnGetProductByIdNotFound() {
+        given().get(String.format(ENDPOINT_GET_ID, PRODUCT_NONEXISTING_ID))
+                .then().statusCode(HttpStatus.SC_NOT_FOUND)
+                .body("status_code", is(HttpStatus.SC_NOT_FOUND))
+                .body("message", containsString("The product with id " + PRODUCT_NONEXISTING_ID + " was not found"));
+    }
 
     // get all products successfully
+    @Test
+    void shouldGetAllProducts() {
+        given().get(ENDPOINT_GET_ALL)
+                .then().statusCode(HttpStatus.SC_OK).log().all();
+    }
     // get no products with empty database
 
     // get products with query (q, min, max)
 
     // delete successfully
-    // error on id not found
+    @Test
+    void shouldDeleteProduct() {
+        given().delete(String.format(ENDPOINT_DELETE, PRODUCT_OBSOLETE_ID))
+                .then().statusCode(HttpStatus.SC_OK);
+    }
 
-    // error on json mappings
+    // error on id not found
+    @Test
+    void shouldFailOnDeleteProductByIdNotFound() {
+        given().delete(String.format(ENDPOINT_DELETE, PRODUCT_NONEXISTING_ID))
+                .then().statusCode(HttpStatus.SC_NOT_FOUND)
+                .body("status_code", is(HttpStatus.SC_NOT_FOUND))
+                .body("message", containsString("The product with id " + PRODUCT_NONEXISTING_ID + " was not found"));
+    }
 }

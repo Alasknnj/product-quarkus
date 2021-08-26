@@ -1,5 +1,6 @@
 package br.com.compasso.desafio.domain.entity;
 
+import br.com.compasso.desafio.service.exception.ProductNotFoundException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -7,11 +8,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @Entity(name = "product")
 public class Product extends PanacheEntityBase {
@@ -37,8 +41,21 @@ public class Product extends PanacheEntityBase {
     @Positive(message = "price must be positive")
     @Column(name = "price")
     @NotNull(message = "price is mandatory")
-
     BigDecimal price;
+
+    public static Product getProductByIdOrThrow(String id) {
+        return (Product) Product.findByIdOptional(id).orElseThrow(() -> new ProductNotFoundException(id));
+    }
+
+    public static List<Product> getAllProducts() {
+        return listAll();
+    }
+
+    public void update(@Valid Product updatedProduct) {
+        setName(updatedProduct.getName());
+        setDescription(updatedProduct.getDescription());
+        setPrice(updatedProduct.getPrice());
+    }
 
     public String getId() {
         return id;
