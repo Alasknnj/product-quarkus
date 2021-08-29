@@ -117,7 +117,7 @@ class ProductResourceTest {
         given().contentType(ContentType.JSON)
             .body(builder.toJson(dto))
             .post(ENDPOINT_CREATE)
-            .then().statusCode(HttpStatus.SC_BAD_REQUEST).log().all()
+            .then().statusCode(HttpStatus.SC_BAD_REQUEST)
             .body("status_code", is(HttpStatus.SC_BAD_REQUEST))
             .body("message", containsString("price must be positive"));
     }

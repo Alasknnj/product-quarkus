@@ -56,19 +56,16 @@ public class Product extends PanacheEntityBase {
         }
 
         String query = "";
-
         if(textSearch != null) {
             query = "(lower(name) || lower(description)) like '%" + textSearch.trim().toLowerCase() + "%'";
             query += minPrice != null ? " AND price >= " + minPrice : "";
             query += maxPrice != null ? " AND price <= " + maxPrice : "";
-        } else {
-            if(minPrice != null && maxPrice != null) {
-                query = "price >= " + minPrice + "AND price <= " + maxPrice;
-            } else if(minPrice != null && maxPrice == null) {
-                query = "price >= " + minPrice;
-            } else if(minPrice == null && maxPrice != null) {
-                query = "price <= " + maxPrice;
-            }
+        } else if (minPrice != null && maxPrice != null) {
+            query = "price >= " + minPrice + "AND price <= " + maxPrice;
+        } else if (minPrice != null && maxPrice == null) {
+            query = "price >= " + minPrice;
+        } else if (minPrice == null && maxPrice != null) {
+            query = "price <= " + maxPrice;
         }
 
         return list(query);
@@ -82,10 +79,6 @@ public class Product extends PanacheEntityBase {
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {

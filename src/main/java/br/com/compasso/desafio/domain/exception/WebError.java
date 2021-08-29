@@ -9,10 +9,6 @@ public class WebError {
 
     String message;
 
-    public WebError() {
-        // Empty deserialization constructor
-    }
-
     public WebError(String message, int statusCode) {
         this.message = message;
         this.statusCode = statusCode;
@@ -22,15 +18,7 @@ public class WebError {
         return statusCode;
     }
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }
