@@ -14,8 +14,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Entity(name = "product")
 public class Product extends PanacheEntityBase {
@@ -44,11 +43,35 @@ public class Product extends PanacheEntityBase {
     BigDecimal price;
 
     public static Product getProductByIdOrThrow(String id) {
-        return (Product) Product.findByIdOptional(id).orElseThrow(() -> new ProductNotFoundException(id));
+        return (Product) findByIdOptional(id).orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     public static List<Product> getAllProducts() {
         return listAll();
+    }
+
+    public static List<Product> search(String textSearch, String minPrice, String maxPrice) {
+        if(textSearch == null && minPrice == null && maxPrice == null) {
+            return listAll();
+        }
+
+        String query = "";
+
+        if(textSearch != null) {
+            query = "(lower(name) || lower(description)) like '%" + textSearch.trim().toLowerCase() + "%'";
+            query += minPrice != null ? " AND price >= " + minPrice : "";
+            query += maxPrice != null ? " AND price <= " + maxPrice : "";
+        } else {
+            if(minPrice != null && maxPrice != null) {
+                query = "price >= " + minPrice + "AND price <= " + maxPrice;
+            } else if(minPrice != null && maxPrice == null) {
+                query = "price >= " + minPrice;
+            } else if(minPrice == null && maxPrice != null) {
+                query = "price <= " + maxPrice;
+            }
+        }
+
+        return list(query);
     }
 
     public void update(@Valid Product updatedProduct) {

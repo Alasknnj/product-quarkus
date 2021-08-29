@@ -54,8 +54,12 @@ public class ProductResource {
     @GET
     @Path("search")
     // TODO: 8/25/21 check how to implement
-    public List<ProductDTO> getByQuery() {
-        return null;
+    public List<ProductDTO> getByQuery(
+        @QueryParam("q") final String textSearch,
+        @QueryParam("min_price") final String minPrice,
+        @QueryParam("max_price") final String maxPrice) {
+
+        return ProductDTO.toDTOList(Product.search(textSearch, minPrice, maxPrice));
     }
 
     @DELETE
