@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.0-SNAPSHOT] - 30/08/2021
+## [1.0.0] - 30/08/2021
 
 ### Added
 
@@ -10,6 +10,6 @@
 - Swagger documentation
 - Javadoc documentation
 
-[1.0.0-SNPASHOT]: https://github.com/Alasknnj/product-quarkus/pull/1
+[1.0.0]: https://github.com/Alasknnj/product-quarkus/pull/2
 
 
