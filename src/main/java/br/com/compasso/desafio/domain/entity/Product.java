@@ -28,7 +28,6 @@ public class Product extends PanacheEntityBase {
     @Size(max = 50, message = "name cannot be over 50 characters")
     @NotBlank(message = "name is mandatory")
     @Column(name = "name")
-    // TODO: 8/25/21 add unique to name?
     String name;
 
     @Column(name = "description")
@@ -62,10 +61,8 @@ public class Product extends PanacheEntityBase {
             query += maxPrice != null ? " AND price <= " + maxPrice : "";
         } else if (minPrice != null && maxPrice != null) {
             query = "price >= " + minPrice + "AND price <= " + maxPrice;
-        } else if (minPrice != null && maxPrice == null) {
-            query = "price >= " + minPrice;
-        } else if (minPrice == null && maxPrice != null) {
-            query = "price <= " + maxPrice;
+        } else {
+            query = minPrice != null ? "price >= " + minPrice : "price <= " + maxPrice;
         }
 
         return list(query);

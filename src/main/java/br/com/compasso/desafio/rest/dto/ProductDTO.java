@@ -1,6 +1,7 @@
 package br.com.compasso.desafio.rest.dto;
 
 import br.com.compasso.desafio.domain.entity.Product;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 
 public class ProductDTO {
 
+    @Schema(readOnly = true)
     String id;
 
     String name;
