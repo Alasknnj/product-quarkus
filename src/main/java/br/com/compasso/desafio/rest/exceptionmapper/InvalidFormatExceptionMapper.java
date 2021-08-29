@@ -8,6 +8,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+/**
+ * Exception Mapper for InvalidFormats by using invalid values for a specified type
+ */
 @Provider
 public class InvalidFormatExceptionMapper implements ExceptionMapper<InvalidFormatException> {
     private static final String ERROR_MSG = "The value %s is not valid for type %s";

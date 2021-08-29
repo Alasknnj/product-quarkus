@@ -1,5 +1,6 @@
-package br.com.compasso.desafio.domain.exception;
+package br.com.compasso.desafio.rest.exceptionmapper;
 
+import br.com.compasso.desafio.domain.exception.WebError;
 import org.apache.http.HttpStatus;
 
 import javax.validation.ConstraintViolation;
@@ -9,6 +10,9 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import java.util.stream.Collectors;
 
+/**
+ * Exception Mapper for all ConstraintViolations caused by javax validation violations on DTOs
+ */
 @Provider
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
     private static final int STATUS_CODE = HttpStatus.SC_BAD_REQUEST;

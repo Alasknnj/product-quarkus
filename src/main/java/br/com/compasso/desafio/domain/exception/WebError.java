@@ -2,6 +2,9 @@ package br.com.compasso.desafio.domain.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Error object used to forward backend errors through a response body
+ */
 public class WebError {
 
     @JsonProperty("status_code")

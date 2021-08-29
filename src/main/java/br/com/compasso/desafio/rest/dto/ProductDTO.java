@@ -7,6 +7,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Data Transfer Object used for creating and updating products, as well as forwarding Product information on GET requests
+ */
 public class ProductDTO {
 
     @Schema(readOnly = true)

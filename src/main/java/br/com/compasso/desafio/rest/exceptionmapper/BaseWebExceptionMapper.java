@@ -7,6 +7,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+/**
+ * Exception Mapper for Web Errors created and thrown by the service
+ */
 @Provider
 public class BaseWebExceptionMapper implements ExceptionMapper<BaseWebException> {
     @Override

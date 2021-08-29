@@ -6,6 +6,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+/**
+ * Service Bean used for applying business logic and transactions on Products
+ */
 @ApplicationScoped
 public class ProductService {
 

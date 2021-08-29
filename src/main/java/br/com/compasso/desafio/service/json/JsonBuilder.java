@@ -6,6 +6,9 @@ import javax.enterprise.context.ApplicationScoped;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Service created to serialize and deserialize objects
+ */
 @ApplicationScoped
 public class JsonBuilder {
 
