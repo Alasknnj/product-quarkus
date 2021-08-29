@@ -1,6 +1,5 @@
 package br.com.compasso.desafio.service.json;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -14,7 +13,7 @@ public class JsonBuilder {
         return new ObjectMapper().writeValueAsString(object);
     }
 
-    public <T> T fromJsonFile(String path, Class clazz) throws IOException {
+    public <T> T fromJsonFile(String path, Class<?> clazz) throws IOException {
         return (T) new ObjectMapper().readValue(new File(path), clazz);
     }
 }

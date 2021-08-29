@@ -1,9 +1,9 @@
 package br.com.compasso.desafio.domain.exception;
 
 public abstract class BaseWebException extends RuntimeException {
-    private int statusCode;
+    private final int statusCode;
 
-    public BaseWebException(String errorMessage, int statusCode) {
+    BaseWebException(String errorMessage, int statusCode) {
         super(errorMessage);
         this.statusCode = statusCode;
     }

@@ -1,7 +1,6 @@
 package br.com.compasso.desafio.service;
 
 import br.com.compasso.desafio.domain.entity.Product;
-import br.com.compasso.desafio.service.exception.ProductNotFoundException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;

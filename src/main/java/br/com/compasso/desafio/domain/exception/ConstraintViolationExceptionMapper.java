@@ -2,7 +2,7 @@ package br.com.compasso.desafio.domain.exception;
 
 import org.apache.http.HttpStatus;
 
-import javax.validation.ConstraintDeclarationException;
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -16,8 +16,8 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
     @Override
     public Response toResponse(ConstraintViolationException e) {
         String errors = e.getConstraintViolations().stream()
-                .map(cv -> cv.getMessage())
-                .collect(Collectors.joining(", "));;
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining(", "));
         WebError error = new WebError(errors, STATUS_CODE);
         return Response.status(STATUS_CODE).entity(error).build();
     }
